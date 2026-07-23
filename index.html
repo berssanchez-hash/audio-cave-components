@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Audio Cave — Headphone</title>
   <style>
-    :root{--beam-width:104px;--glow-width:260px;--cycle:8s;--found-duration:1300ms}
+    :root{--beam-width:104px;--glow-width:260px;--cycle:8s;--found-duration:1600ms}
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{width:100%;height:100%;background:transparent}
     body{min-height:100vh;display:grid;place-items:center;overflow:hidden;background:transparent}
@@ -18,12 +18,29 @@
     .headphone__pulse--core{-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 20%,#000 46%,#000 54%,rgba(0,0,0,.18) 80%,transparent 100%);-webkit-mask-size:var(--beam-width) 100%;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 20%,#000 46%,#000 54%,rgba(0,0,0,.18) 80%,transparent 100%);mask-size:var(--beam-width) 100%}
     .headphone[data-state="SCANNING"] .headphone__pulse--glow{opacity:.55;animation:audio-cave-pulse-glow var(--cycle) linear infinite}
     .headphone[data-state="SCANNING"] .headphone__pulse--core{opacity:1;animation:audio-cave-pulse-core var(--cycle) linear infinite}
-    .headphone[data-state="FOUND"] .headphone__full{animation:audio-cave-found var(--found-duration) cubic-bezier(.22,.78,.2,1) forwards}
+    .headphone[data-state="FOUND"] .headphone__full{animation:audio-cave-found var(--found-duration) cubic-bezier(.12,.85,.15,1) forwards}
     .headphone[data-state="RESULT"] .headphone__full{opacity:1;clip-path:inset(0)}
     @keyframes audio-cave-pulse-glow{0%,10%{-webkit-mask-position:calc(-1 * var(--glow-width)) 0;mask-position:calc(-1 * var(--glow-width)) 0}64%{-webkit-mask-position:54% 0;mask-position:54% 0}90%,100%{-webkit-mask-position:calc(100% + var(--glow-width)) 0;mask-position:calc(100% + var(--glow-width)) 0}}
     @keyframes audio-cave-pulse-core{0%,10%{-webkit-mask-position:calc(-1 * var(--beam-width)) 0;mask-position:calc(-1 * var(--beam-width)) 0}64%{-webkit-mask-position:54% 0;mask-position:54% 0}90%,100%{-webkit-mask-position:calc(100% + var(--beam-width)) 0;mask-position:calc(100% + var(--beam-width)) 0}}
-    @keyframes audio-cave-found{0%{opacity:0;clip-path:inset(0 100% 0 0);filter:brightness(1.65) drop-shadow(0 0 18px rgba(246,243,241,.65))}72%{opacity:1;clip-path:inset(0);filter:brightness(1.2) drop-shadow(0 0 10px rgba(246,243,241,.28))}100%{opacity:1;clip-path:inset(0);filter:brightness(1) drop-shadow(0 0 0 rgba(246,243,241,0))}}
-    @media (prefers-reduced-motion:reduce){.headphone__pulse{animation:none!important;opacity:0!important}.headphone[data-state="FOUND"] .headphone__full{animation:none;opacity:1;clip-path:inset(0)}}
+@keyframes audio-cave-found{
+  0%{
+    opacity:0;
+    clip-path:inset(0 100% 0 0);
+    filter:brightness(1.65) drop-shadow(0 0 18px rgba(246,243,241,.65));
+  }
+
+  96%{
+    opacity:1;
+    clip-path:inset(0);
+    filter:brightness(1.2) drop-shadow(0 0 10px rgba(246,243,241,.28));
+  }
+
+  100%{
+    opacity:1;
+    clip-path:inset(0);
+    filter:brightness(1) drop-shadow(0 0 0 rgba(246,243,241,0));
+  }
+}    @media (prefers-reduced-motion:reduce){.headphone__pulse{animation:none!important;opacity:0!important}.headphone[data-state="FOUND"] .headphone__full{animation:none;opacity:1;clip-path:inset(0)}}
   </style>
 </head>
 <body>
@@ -625,7 +642,7 @@
   <script>
     (() => {
       const STATES=Object.freeze(["IDLE","SCANNING","FOUND","RESULT"]);
-      const FOUND_DURATION=1300;
+      const FOUND_DURATION=1600;
       const element=document.querySelector(".headphone");
       let currentState="IDLE";
       let foundTimer;
