@@ -20,8 +20,8 @@
     .headphone[data-state="SCANNING"] .headphone__pulse--core{opacity:1;animation:audio-cave-pulse-core var(--cycle) linear infinite}
     .headphone[data-state="FOUND"] .headphone__full{animation:audio-cave-found var(--found-duration) cubic-bezier(.22,.78,.2,1) forwards}
     .headphone[data-state="RESULT"] .headphone__full{opacity:1;clip-path:inset(0)}
-    @keyframes audio-cave-pulse-glow{0%,16%{-webkit-mask-position:calc(-1 * var(--glow-width)) 0;mask-position:calc(-1 * var(--glow-width)) 0}58%{-webkit-mask-position:54% 0;mask-position:54% 0}84%,100%{-webkit-mask-position:calc(100% + var(--glow-width)) 0;mask-position:calc(100% + var(--glow-width)) 0}}
-    @keyframes audio-cave-pulse-core{0%,16%{-webkit-mask-position:calc(-1 * var(--beam-width)) 0;mask-position:calc(-1 * var(--beam-width)) 0}58%{-webkit-mask-position:54% 0;mask-position:54% 0}84%,100%{-webkit-mask-position:calc(100% + var(--beam-width)) 0;mask-position:calc(100% + var(--beam-width)) 0}}
+    @keyframes audio-cave-pulse-glow{0%,10%{-webkit-mask-position:calc(-1 * var(--glow-width)) 0;mask-position:calc(-1 * var(--glow-width)) 0}64%{-webkit-mask-position:54% 0;mask-position:54% 0}90%,100%{-webkit-mask-position:calc(100% + var(--glow-width)) 0;mask-position:calc(100% + var(--glow-width)) 0}}
+    @keyframes audio-cave-pulse-core{0%,10%{-webkit-mask-position:calc(-1 * var(--beam-width)) 0;mask-position:calc(-1 * var(--beam-width)) 0}64%{-webkit-mask-position:54% 0;mask-position:54% 0}90%,100%{-webkit-mask-position:calc(100% + var(--beam-width)) 0;mask-position:calc(100% + var(--beam-width)) 0}}
     @keyframes audio-cave-found{0%{opacity:0;clip-path:inset(0 100% 0 0);filter:brightness(1.65) drop-shadow(0 0 18px rgba(246,243,241,.65))}72%{opacity:1;clip-path:inset(0);filter:brightness(1.2) drop-shadow(0 0 10px rgba(246,243,241,.28))}100%{opacity:1;clip-path:inset(0);filter:brightness(1) drop-shadow(0 0 0 rgba(246,243,241,0))}}
     @media (prefers-reduced-motion:reduce){.headphone__pulse{animation:none!important;opacity:0!important}.headphone[data-state="FOUND"] .headphone__full{animation:none;opacity:1;clip-path:inset(0)}}
   </style>
