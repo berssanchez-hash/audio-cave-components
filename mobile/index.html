@@ -65,26 +65,74 @@
     opacity: 0;
     pointer-events: none;
     fill: #F6F3F1;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
   }
 
   .headphone__pulse--glow {
     filter: drop-shadow(0 0 9px rgba(246, 243, 241, 0.42));
+
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.08) 18%,
+      rgba(0, 0, 0, 0.42) 38%,
+      #000 50%,
+      rgba(0, 0, 0, 0.42) 62%,
+      rgba(0, 0, 0, 0.08) 82%,
+      transparent 100%
+    );
+
+    -webkit-mask-size: var(--glow-width) 100%;
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.08) 18%,
+      rgba(0, 0, 0, 0.42) 38%,
+      #000 50%,
+      rgba(0, 0, 0, 0.42) 62%,
+      rgba(0, 0, 0, 0.08) 82%,
+      transparent 100%
+    );
+
+    mask-size: var(--glow-width) 100%;
+  }
+
+  .headphone__pulse--core {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 20%,
+      #000 46%,
+      #000 54%,
+      rgba(0, 0, 0, 0.18) 80%,
+      transparent 100%
+    );
+
+    -webkit-mask-size: var(--beam-width) 100%;
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 20%,
+      #000 46%,
+      #000 54%,
+      rgba(0, 0, 0, 0.18) 80%,
+      transparent 100%
+    );
+
+    mask-size: var(--beam-width) 100%;
   }
 
   .headphone[data-state="SCANNING"] .headphone__pulse--glow {
     opacity: 0.55;
+    animation: audio-cave-pulse-glow var(--cycle) linear infinite;
   }
 
   .headphone[data-state="SCANNING"] .headphone__pulse--core {
     opacity: 1;
-  }
-
-  .headphone__scan-path {
-    animation: none;
-  }
-
-  .headphone[data-state="SCANNING"] .headphone__scan-path {
-    animation: audio-cave-path-scan var(--cycle) linear infinite;
+    animation: audio-cave-pulse-core var(--cycle) linear infinite;
   }
 
   .headphone[data-state="FOUND"] .headphone__full {
@@ -100,15 +148,31 @@
     clip-path: inset(0);
   }
 
-  @keyframes audio-cave-path-scan {
+  @keyframes audio-cave-pulse-glow {
     0%,
     4% {
-      stroke-dashoffset: var(--scan-start);
+      -webkit-mask-position: calc(-1 * var(--glow-width)) 0;
+      mask-position: calc(-1 * var(--glow-width)) 0;
     }
 
     96%,
     100% {
-      stroke-dashoffset: var(--scan-end);
+      -webkit-mask-position: calc(100% + var(--glow-width)) 0;
+      mask-position: calc(100% + var(--glow-width)) 0;
+    }
+  }
+
+  @keyframes audio-cave-pulse-core {
+    0%,
+    4% {
+      -webkit-mask-position: calc(-1 * var(--beam-width)) 0;
+      mask-position: calc(-1 * var(--beam-width)) 0;
+    }
+
+    96%,
+    100% {
+      -webkit-mask-position: calc(100% + var(--beam-width)) 0;
+      mask-position: calc(100% + var(--beam-width)) 0;
     }
   }
 
@@ -670,49 +734,11 @@
         return svg;
       }
 
-      const SCAN_PATH="M-120 0 L640 80 L356 1166 L967 1308 L1235 1060 C1255 1015 1310 925 1390 850 C1515 735 1650 815 1840 790 C1965 770 1980 655 2050 575 C2110 505 2010 480 1905 425 C1780 360 1690 325 1755 300 C1900 255 2060 310 2200 360 C2370 420 2520 405 2700 275 C2840 180 2990 270 3190 430";
-
-      function createPulseSvg(className,maskId,strokeWidth,segmentLength){
-        const svg=createSvg("headphone-white-template",className);
-        const ns="http://www.w3.org/2000/svg";
-        const artwork=document.createElementNS(ns,"g");
-        [...svg.children].forEach(node=>artwork.append(node));
-
-        const defs=document.createElementNS(ns,"defs");
-        const mask=document.createElementNS(ns,"mask");
-        mask.id=maskId;
-        mask.setAttribute("maskUnits","userSpaceOnUse");
-        mask.setAttribute("x","0");
-        mask.setAttribute("y","0");
-        mask.setAttribute("width","3073");
-        mask.setAttribute("height","1367");
-
-        const path=document.createElementNS(ns,"path");
-        path.setAttribute("d",SCAN_PATH);
-        path.setAttribute("fill","none");
-        path.setAttribute("stroke","white");
-        path.setAttribute("stroke-width",strokeWidth);
-        path.setAttribute("stroke-linecap","round");
-        path.setAttribute("stroke-linejoin","round");
-        path.classList.add("headphone__scan-path");
-        mask.append(path);
-        defs.append(mask);
-
-        artwork.setAttribute("mask",`url(#${maskId})`);
-        svg.append(defs,artwork);
-
-        const length=path.getTotalLength();
-        path.style.strokeDasharray=`${segmentLength} ${length + segmentLength}`;
-        path.style.setProperty("--scan-start",`${length + segmentLength}px`);
-        path.style.setProperty("--scan-end",`${-segmentLength}px`);
-        return svg;
-      }
-
       element.append(
         createSvg("headphone-gray-template","headphone__base"),
         createSvg("headphone-white-template","headphone__full"),
-        createPulseSvg("headphone__pulse headphone__pulse--glow","scan-mask-glow","310","430"),
-        createPulseSvg("headphone__pulse headphone__pulse--core","scan-mask-core","145","190")
+        createSvg("headphone-white-template","headphone__pulse headphone__pulse--glow"),
+        createSvg("headphone-white-template","headphone__pulse headphone__pulse--core")
       );
 
       function normalizeState(state){return String(state||"").trim().toUpperCase()}
