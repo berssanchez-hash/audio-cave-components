@@ -8,7 +8,8 @@
   :root {
     --beam-width: 104px;
     --glow-width: 260px;
-    --cycle: 7s;
+    /* Two 7s passes: headphone first, then cable. */
+    --cycle: 14s;
     --found-duration: 2800ms;
   }
 
@@ -33,13 +34,18 @@
     background: transparent;
   }
 
+  .mobile-audio {
+    width: 100%;
+  }
+
   .headphone {
     position: relative;
     width: 100%;
     aspect-ratio: 3073 / 1367;
   }
 
-  .headphone svg {
+  .headphone svg,
+  .cable img {
     position: absolute;
     inset: 0;
     display: block;
@@ -150,12 +156,12 @@
 
   @keyframes audio-cave-pulse-glow {
     0%,
-    4% {
+    2% {
       -webkit-mask-position: calc(-1 * var(--glow-width)) 0;
       mask-position: calc(-1 * var(--glow-width)) 0;
     }
 
-    96%,
+    48%,
     100% {
       -webkit-mask-position: calc(100% + var(--glow-width)) 0;
       mask-position: calc(100% + var(--glow-width)) 0;
@@ -164,12 +170,12 @@
 
   @keyframes audio-cave-pulse-core {
     0%,
-    4% {
+    2% {
       -webkit-mask-position: calc(-1 * var(--beam-width)) 0;
       mask-position: calc(-1 * var(--beam-width)) 0;
     }
 
-    96%,
+    48%,
     100% {
       -webkit-mask-position: calc(100% + var(--beam-width)) 0;
       mask-position: calc(100% + var(--beam-width)) 0;
@@ -218,13 +224,144 @@
     }
   }
 
+  .cable {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 506 / 336;
+  }
+
+  .cable__base {
+    z-index: 1;
+    fill: #2E2E2E;
+  }
+
+  .cable__full {
+    z-index: 2;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    pointer-events: none;
+    fill: #F6F3F1;
+  }
+
+  .cable__pulse {
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    fill: #F6F3F1;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .cable__pulse--glow {
+    filter: drop-shadow(0 0 9px rgba(246, 243, 241, 0.42));
+
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.08) 18%,
+      rgba(0, 0, 0, 0.42) 38%,
+      #000 50%,
+      rgba(0, 0, 0, 0.42) 62%,
+      rgba(0, 0, 0, 0.08) 82%,
+      transparent 100%
+    );
+
+    -webkit-mask-size: var(--glow-width) 100%;
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.08) 18%,
+      rgba(0, 0, 0, 0.42) 38%,
+      #000 50%,
+      rgba(0, 0, 0, 0.42) 62%,
+      rgba(0, 0, 0, 0.08) 82%,
+      transparent 100%
+    );
+
+    mask-size: var(--glow-width) 100%;
+  }
+
+  .cable__pulse--core {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 20%,
+      #000 46%,
+      #000 54%,
+      rgba(0, 0, 0, 0.18) 80%,
+      transparent 100%
+    );
+
+    -webkit-mask-size: var(--beam-width) 100%;
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 20%,
+      #000 46%,
+      #000 54%,
+      rgba(0, 0, 0, 0.18) 80%,
+      transparent 100%
+    );
+
+    mask-size: var(--beam-width) 100%;
+  }
+
+  .cable[data-state="SCANNING"] .cable__pulse--glow {
+    opacity: 0.55;
+    animation: audio-cave-cable-glow var(--cycle) linear infinite;
+  }
+
+  .cable[data-state="SCANNING"] .cable__pulse--core {
+    opacity: 1;
+    animation: audio-cave-cable-core var(--cycle) linear infinite;
+  }
+
+  .cable[data-state="FOUND"] .cable__full {
+    animation:
+      audio-cave-found
+      var(--found-duration)
+      cubic-bezier(0.22, 0.61, 0.36, 1)
+      forwards;
+  }
+
+  .cable[data-state="RESULT"] .cable__full {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+
+  @keyframes audio-cave-cable-glow {
+    0%, 52% {
+      -webkit-mask-position: calc(100% + var(--glow-width)) 0;
+      mask-position: calc(100% + var(--glow-width)) 0;
+    }
+    98%, 100% {
+      -webkit-mask-position: calc(-1 * var(--glow-width)) 0;
+      mask-position: calc(-1 * var(--glow-width)) 0;
+    }
+  }
+
+  @keyframes audio-cave-cable-core {
+    0%, 52% {
+      -webkit-mask-position: calc(100% + var(--beam-width)) 0;
+      mask-position: calc(100% + var(--beam-width)) 0;
+    }
+    98%, 100% {
+      -webkit-mask-position: calc(-1 * var(--beam-width)) 0;
+      mask-position: calc(-1 * var(--beam-width)) 0;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .headphone__pulse {
+    .headphone__pulse,
+    .cable__pulse {
       animation: none !important;
       opacity: 0 !important;
     }
 
-    .headphone[data-state="FOUND"] .headphone__full {
+    .headphone[data-state="FOUND"] .headphone__full,
+    .cable[data-state="FOUND"] .cable__full {
       animation: none;
       opacity: 1;
       clip-path: inset(0);
@@ -233,7 +370,15 @@
 </style>
 </head>
 <body>
-  <div class="headphone" data-state="IDLE" aria-label="Headphone da Audio Cave"></div>
+  <div class="mobile-audio">
+    <div class="headphone" data-state="IDLE" aria-label="Headphone da Audio Cave"></div>
+    <div class="cable" data-state="IDLE" aria-hidden="true">
+      <img class="cable__base" src="assets/cable-gray.svg" alt="" draggable="false">
+      <img class="cable__full" src="assets/cable-white.svg" alt="" draggable="false">
+      <img class="cable__pulse cable__pulse--glow" src="assets/cable-white.svg" alt="" draggable="false">
+      <img class="cable__pulse cable__pulse--core" src="assets/cable-white.svg" alt="" draggable="false">
+    </div>
+  </div>
 
   <template id="headphone-gray-template">
 <svg width="3073" height="1367" viewBox="0 0 3073 1367" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -723,6 +868,7 @@
       const STATES=Object.freeze(["IDLE","SCANNING","FOUND","RESULT"]);
       const FOUND_DURATION=2800;
       const element=document.querySelector(".headphone");
+      const cable=document.querySelector(".cable");
       let currentState="IDLE";
       let foundTimer;
 
@@ -755,9 +901,11 @@
         window.clearTimeout(foundTimer);
         if(state==="FOUND"){
           element.dataset.state="IDLE";
+          cable.dataset.state="IDLE";
           void element.offsetWidth;
         }
         element.dataset.state=state;
+        cable.dataset.state=state;
         currentState=state;
         notify(state);
         if(state==="FOUND"){
