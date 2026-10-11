@@ -10,7 +10,9 @@
     --glow-width: 260px;
     /* Idle for the first 7s, then scan right to left for the next 7s. */
     --cycle: 14s;
-    --found-duration: 2800ms;
+    --found-fill-duration: 2200ms;
+    --found-fade-duration: 600ms;
+    --idle-fade-duration: 500ms;
   }
 
   * {
@@ -46,18 +48,18 @@
     height: 100%;
   }
 
-  @keyframes audio-cave-found {
+  @keyframes audio-cave-found-fill {
     0% {
-      opacity: 0;
-      clip-path: inset(0 100% 0 0);
+      opacity: 1;
+      clip-path: inset(0 0 0 100%);
       filter:
         brightness(1.5)
         drop-shadow(0 0 16px rgba(246, 243, 241, 0.55));
     }
 
     35% {
-      opacity: 0.82;
-      clip-path: inset(0 68% 0 0);
+      opacity: 1;
+      clip-path: inset(0 0 0 68%);
       filter:
         brightness(1.42)
         drop-shadow(0 0 18px rgba(246, 243, 241, 0.48));
@@ -65,7 +67,7 @@
 
     70% {
       opacity: 1;
-      clip-path: inset(0 18% 0 0);
+      clip-path: inset(0 0 0 18%);
       filter:
         brightness(1.24)
         drop-shadow(0 0 12px rgba(246, 243, 241, 0.32));
@@ -92,6 +94,33 @@
     position: relative;
     width: 100%;
     aspect-ratio: 506 / 336;
+    opacity: 1;
+  }
+
+  .cable[data-state="SCANNING"] {
+    opacity: 1;
+  }
+
+  .cable[data-state="FOUND"] {
+    animation: audio-cave-found-fade var(--found-fade-duration) ease-in var(--found-fill-duration) forwards;
+  }
+
+  .cable[data-state="RESULT"] {
+    opacity: 0;
+  }
+
+  .cable[data-state="IDLE"][data-reappearing="true"] {
+    animation: audio-cave-idle-fade var(--idle-fade-duration) ease-out both;
+  }
+
+  @keyframes audio-cave-found-fade {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes audio-cave-idle-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   .cable__base {
@@ -184,8 +213,8 @@
 
   .cable[data-state="FOUND"] .cable__full {
     animation:
-      audio-cave-found
-      var(--found-duration)
+      audio-cave-found-fill
+      var(--found-fill-duration)
       cubic-bezier(0.22, 0.61, 0.36, 1)
       forwards;
   }
@@ -218,6 +247,15 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .cable[data-state="FOUND"] {
+      animation: none;
+      opacity: 0;
+    }
+
+    .cable[data-state="IDLE"][data-reappearing="true"] {
+      animation: none;
+    }
+
     .cable__pulse {
       animation: none !important;
       opacity: 0 !important;
@@ -261,11 +299,14 @@
         const state=normalizeState(nextState);
         if(!STATES.includes(state)) throw new Error(`Unknown cable state: ${nextState}`);
         window.clearTimeout(foundTimer);
+        const reappearing=state==="IDLE"&&(currentState==="FOUND"||currentState==="RESULT");
+        delete element.dataset.reappearing;
         if(state==="FOUND"||state==="SCANNING"){
           element.dataset.state="IDLE";
           void element.offsetWidth;
         }
         element.dataset.state=state;
+        if(reappearing) element.dataset.reappearing="true";
         currentState=state;
         notify(state);
         if(state==="FOUND"){
