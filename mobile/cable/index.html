@@ -225,26 +225,28 @@
   }
 
   @keyframes audio-cave-cable-glow {
-    0%, 50% {
-      -webkit-mask-position: calc(100% + var(--glow-width)) 0;
-      mask-position: calc(100% + var(--glow-width)) 0;
-    }
-    100% {
-      -webkit-mask-position: calc(-1 * var(--glow-width)) 0;
-      mask-position: calc(-1 * var(--glow-width)) 0;
-    }
+  0%, 42.857% {
+    -webkit-mask-position: calc(100% + var(--glow-width)) 0;
+    mask-position: calc(100% + var(--glow-width)) 0;
   }
 
-  @keyframes audio-cave-cable-core {
-    0%, 50% {
-      -webkit-mask-position: calc(100% + var(--beam-width)) 0;
-      mask-position: calc(100% + var(--beam-width)) 0;
-    }
-    100% {
-      -webkit-mask-position: calc(-1 * var(--beam-width)) 0;
-      mask-position: calc(-1 * var(--beam-width)) 0;
-    }
+  92.857%, 100% {
+    -webkit-mask-position: calc(-1 * var(--glow-width)) 0;
+    mask-position: calc(-1 * var(--glow-width)) 0;
   }
+}
+
+@keyframes audio-cave-cable-core {
+  0%, 42.857% {
+    -webkit-mask-position: calc(100% + var(--beam-width)) 0;
+    mask-position: calc(100% + var(--beam-width)) 0;
+  }
+
+  92.857%, 100% {
+    -webkit-mask-position: calc(-1 * var(--beam-width)) 0;
+    mask-position: calc(-1 * var(--beam-width)) 0;
+  }
+}
 
   @media (prefers-reduced-motion: reduce) {
     .cable[data-state="FOUND"] {
