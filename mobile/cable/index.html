@@ -98,8 +98,9 @@
   }
 
   .cable[data-state="SCANNING"] {
-    opacity: 1;
-  }
+  opacity: 1;
+  transform: translateY(-24px);
+}
 
   .cable[data-state="FOUND"] {
     animation: audio-cave-found-fade var(--found-fade-duration) ease-in var(--found-fill-duration) forwards;
