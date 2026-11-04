@@ -323,6 +323,13 @@
         if(!data||typeof data!=="object") return;
         if(data.type==="SET_CABLE_STATE"||data.type==="CABLE_SET_STATE") setState(data.state);
       });
+      
+      if (window.parent !== window) {
+  window.parent.postMessage(
+    { type: "CABLE_READY" },
+    "*"
+  );
+}
     })();
   </script>
 </body>
