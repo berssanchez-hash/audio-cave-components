@@ -777,6 +777,14 @@
         if(!data||typeof data!=="object") return;
         if(data.type==="SET_HEADPHONE_STATE"||data.type==="HEADPHONE_SET_STATE") setState(data.state);
       });
+
+      if (window.parent !== window) {
+  window.parent.postMessage(
+    { type: "HEADPHONE_READY" },
+    "*"
+  );
+}
+      
     })();
   </script>
 </body>
